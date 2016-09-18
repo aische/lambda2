@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>animated lambda calculus evaluator (javascript)</title>
+<style>
+    canvas {
+        border: 1px solid green;
+    }
+    textarea {
+        font-family: Courier;
+        width: 100%;
+    }
+    a.button {
+        border: 1px solid gray;
+        padding: 2px;
+        background-color: #cdcdcd;
+        position: relative;
+        display: inline-block;
+        width: 30px;
+        text-align: center;
+        text-decoration: none;
+    }
+    input[type=range] {
+        position:relative;
+        display: inline-block;
+        top: 10px;
+    }
+    div.group {
+        display: inline-block;
+        white-space: nowrap;
+        padding-right: 8px;
+        margin-bottom: 4px;;
+    }
+</style>
+<script type="text/javascript" src="LamParser.js" ></script>
+<script type="text/javascript" src="LamNode.js" ></script>
+<script type="text/javascript" src="LamTypes.js" ></script>
+<script type="text/javascript" src="LamEvaluator.js" ></script>
+<script type="text/javascript" src="SoundPlayer.js" ></script>
+<script type="text/javascript" src="LamMain.js" ></script>
+<script type="text/javascript" src="main.js" ></script>
+</head>
+<body onload="init()">
+<textarea id="ta1" ></textarea>
+<br>
+<div style="background-color: #efefef;">
+
+<div class="group">
+(re)load:
+<a class="button" href="javascript:void(0)" onclick="main.setLambdaStringFromTextarea ('cbn')" title="load string from textarea">cbn</a>
+<a class="button" href="javascript:void(0)" onclick="main.setLambdaStringFromTextarea ('cbv')" title="load string from textarea">cbv</a>
+<a class="button" href="javascript:void(0)" onclick="main.setLambdaStringFromTextarea ('lazy')" title="load string from textarea">lazy</a>
+</div>
+
+<div class="group">
+run: 
+<a class="button" href="javascript:void(0)" onclick="main.run()">play</a>
+<a class="button" href="javascript:void(0)" onclick="main.stop()">stop</a>
+<a class="button" href="javascript:void(0)" onclick="main.step()">step</a>
+</div>
+
+<div class="group">
+zoom:
+<a class="button" href="javascript:void(0)" onclick="main.decZoom ()">-</a>
+<a class="button" href="javascript:void(0)" onclick="main.incZoom ()">+</a>
+<a class="button" href="javascript:void(0)" onclick="main.setZoom (1)">reset</a>
+</div>
+
+<div class="group">
+move display:
+<a class="button" href="javascript:void(0)" onclick="main.shiftDisplay (-200,0)">&lt;-</a>
+<a class="button" href="javascript:void(0)" onclick="main.shiftDisplay (200,0)">-&gt;</a>
+<a class="button" href="javascript:void(0)" onclick="main.shiftDisplay (0,-200)">^</a>
+<a class="button" href="javascript:void(0)" onclick="main.shiftDisplay (0,200)">v</a>
+<a class="button" href="javascript:void(0)" onclick="main.setDisplay (0,0)">reset</a>
+</div>
+
+<div class="group">
+examples:
+<select onchange="main.loadFileSel(this)">
+<option>simple function I</option>
+<option>simple function II</option>
+<option>simple function III</option>
+<option>simple function IV</option>
+<option>fibonacci numbers I</option>
+<option>fibonacci numbers II</option>
+<option>fibonacci numbers III</option>
+<option>prime numbers</option>
+<option>'quick'-sort</option>
+<option>mutual recursion</option>
+<option>parallel evaluation I</option>
+<option>parallel evaluation II</option>
+<option>parallel evaluation III</option>
+<option>parallel evaluation IV</option>
+<option>parallel evaluation V</option>
+</select>
+</div>
+
+<div class="group">
+tempo:
+fast
+<input type="range" value="500" min="25" max="2000" step="5" onchange="main.interval = this.value">
+slow
+</div>
+
+<div class="group">
+volume:
+<input type="range" value="0.5" min="0.0" max="1.0" step="0.05" onchange="main.setVolume (this.value)">
+</div>
+
+<div class="group">
+frequencies:<a href="javascript:void(0)" onclick="LamMain.randomizeFrequencies()">randomize</a>
+</div>
+
+</div>
+<canvas id="can1" width="800" height="600"></canvas>
+<br>
+
+<pre>
+T =
+    x                       names ([a-z]+) like x, y, abc, foo, bar, baz
+    @ T T                   application
+    \ x . T                 abstraction
+    Y x . T                 recursion
+    123                     number
+    + T T                   operators: + - * / % ^ &lt; &lt;= &lt;&gt; &gt; &gt;= ==
+    if T then T else T      conditional
+    : T T                   cons (pair constructor)
+    car T                   left/first/addressregister cons field
+    cdr T                   right/second/dataregister cons field
+    iscons T                test for cons
+    bind T T                binds a return to a function after evaluating the content of return
+    return T                wraps a term to avoid evaluation
+
+    not T
+    log T
+    sqrt T
+    ceil T
+    floor T
+    round T
+    put T                   output to console (will be wrapped inside a return)
+    alert T                 output to alert window (will be wrapped inside a return)
+
+    random                  get random number (will be wrapped inside a return)
+    get                     get number from prompt dialog window (will be wrapped inside a return)
+
+    par T T                 parallel evaluation, result is second term. note: works only with lazy evaluation
+                            the first expression will be evaluated seperately; it will vanish as soon as it is evaluated.
+                            if the main expression of the program is evaluated, all other (parallel) evaluations stop.
+
+syntactic sugar:
+
+    let x = T1 in T2        ==&gt;  @ (\x.T2) T1
+    letrec x = T1 in T2     ==&gt;  @ (\x.T2) (Yx.T1)
+
+</pre>
+</body>
+</html>
