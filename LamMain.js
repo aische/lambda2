@@ -8,7 +8,7 @@ function LamMain (canvas, textarea) {
 
     this.running = false;
     this.timer = false;
-    this.interval = 250;
+    this.interval = 225;
     this.xoffset = 0;
     this.yoffset = 0;
     this.zoom = 1;
@@ -19,6 +19,7 @@ function LamMain (canvas, textarea) {
     this.currentsteps = false;
     try {
         this.soundplayer = new SoundPlayer ();
+        this.loadSoundBank("sounds/soundbank1.json")
     }
     catch (e) {
         console.log ("Error while opening AudioContext, so the program will not produce sound.");
@@ -69,7 +70,7 @@ LamMain.prototype.setLambdaString = function (string) {
 
     var term = this.parser.parse (string, lazy || false, strict || false);
     if (term) {
-        this.evaluator = new Evaluator (term, this.soundplayer);
+        this.evaluator = new Evaluator (term);
         //this.currentstep = this.evaluator.step ();
         this.currentsteps = this.evaluator.step ();
     }
@@ -184,7 +185,8 @@ LamMain.prototype.step = function () {
         if (this.currentsteps) {
             for (var i=0; i<this.currentsteps.length; i++) {
                 if (this.soundplayer) {
-                    this.soundplayer.playSynth (LamMain.stepinfo[this.currentsteps[i].name].sound);
+                    //this.soundplayer.playSynth (LamMain.stepinfo[this.currentsteps[i].name].sound);
+                    this.soundplayer.playSound (this.currentsteps[i].name);
                 }
                 this.currentsteps[i].action ();
             }
@@ -204,7 +206,8 @@ LamMain.prototype.step0 = function () {
         //this.previoussound = LamMain.stepinfo[estep.name].sound;
         if (this.currentstep) {
             if (this.soundplayer) {
-                this.soundplayer.playSynth (LamMain.stepinfo[this.currentstep.name].sound);
+                //this.soundplayer.playSynth (LamMain.stepinfo[this.currentstep.name].sound);
+                this.soundplayer.playSound (this.currentstep.name);
             }
             this.currentstep.action ();
         }
@@ -226,7 +229,8 @@ LamMain.prototype.runLoop = function () {
         if (this.currentsteps) {
             if (this.soundplayer) {
                 for (var i=0; i<this.currentsteps.length; i++) {
-                    this.soundplayer.playSynth (LamMain.stepinfo[this.currentsteps[i].name].sound);
+                    //this.soundplayer.playSynth (LamMain.stepinfo[this.currentsteps[i].name].sound);
+                    this.soundplayer.playSound (this.currentsteps[i].name);
                 }
             }
         }
@@ -294,6 +298,43 @@ LamMain.prototype.logExampleCode = function () {
     console.log (r);
 };
 
+/*
+	{ 
+	"op2":{
+		"type":"beep", 
+		"frequency":200,
+		"dur":1
+	},
+	"op1":{
+		"type":"sample", 
+		"url":""
+	},
+}
+*/
+
+LamMain.prototype.setSoundBank = function (soundbank) {
+	this.sounds = {};
+	for (var key in soundbank) {
+		var def = soundbank[key];
+	    if (def.type == "beep") {
+	        this.soundplayer.setSoundBeep(key, def.note, def.dur);
+	    } else if (def.type == "sample") {
+	        this.soundplayer.setSoundSample(key, def.url);
+	    }
+	}
+};
+
+LamMain.prototype.loadSoundBank = function (url) {
+    var self = this;
+    var xhr = new XMLHttpRequest();
+    xhr.open ('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function (){
+    	self.setSoundBank(xhr.response)
+    };
+    xhr.send();
+};
+
 LamMain.steps = [ 'op0', 'op1', 'op1_0', 'op2', 'op2_0',
     'app0', 'app1', 'if0', 'if1', 'rec', 'bind0', 'bind1',
     'iscons0', 'iscons1', 'car0', 'car1', 'cdr0', 'cdr1',
@@ -303,97 +344,127 @@ LamMain.steps = [ 'op0', 'op1', 'op1_0', 'op2', 'op2_0',
 
 LamMain.stepinfo = {
     freevar:{ text: "free variable: cannot reduce further.",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (93) }
+              sound: { type: 'beep', frequency: SoundPlayer.midicps (93) }
+              //sound: { type: 'sample', url: 'sample1' }
             },
     op0:    { text: "nullary operator: execute and replace by result",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (68) }
+              sound: { type: 'beep', frequency: SoundPlayer.midicps (68) }
+              //sound: { type: 'sample', url: 'sample2' }
             },
     op1_0:  { text: "unary operator: evaluate first sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (62) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (62) }
+              sound: { type: 'sample', url: 'sample3' }
             },
     op1:    { text: "unary operator (evaluated): execute and replace by result",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (69) }
+              sound: { type: 'beep', frequency: SoundPlayer.midicps (69) }
+              //sound: { type: 'sample', url: 'sample4' }
             },
     op2_0:  { text: "binary operator: evaluate sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (65) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (65) }
+              sound: { type: 'sample', url: 'sounds/sample5.wav' }
             },
     op2:    { text: "binary operator (evaluated): execute and replace by result",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (70) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (70) }
+              sound: { type: 'sample', url: 'sounds/sample6.wav' }
             },
     app0:   { text: "application: evaluate first sub-expression",
-              sound: { synth: 'silence', frequency: SoundPlayer.midicps (69) }
+              //sound: { type: 'silence', frequency: SoundPlayer.midicps (69) }
+              sound: { type: 'sample', url: 'sounds/sample7.wav' }
             },
     app1:   { text: "application: apply function to argument",
-              sound: { synth: 'silence', frequency: SoundPlayer.midicps (71) }
+              //sound: { type: 'silence', frequency: SoundPlayer.midicps (71) }
+              sound: { type: 'sample', url: 'sounds/sample8.wav' }
             },
     if0:    { text: "if: evaluate first sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (72) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (72) }
+              sound: { type: 'sample', url: 'sounds/sample9.wav' }
             },
     if1:    { text: "evaluated if: replace by first or second sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (74) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (74) }
+              sound: { type: 'sample', url: 'sounds/sample10.wav' }
             },
     rec:    { text: "recursion: replace name by thunk",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (76) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (76) }
+              sound: { type: 'sample', url: 'sounds/sample11.wav' }
             },
     bind:   { text: "bind (const): return",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (77) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (77) }
+              sound: { type: 'sample', url: 'sounds/sample12.wav' }
             },
     bind0:  { text: "bind (unevaluated): evaluate left sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (77) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (77) }
+              sound: { type: 'sample', url: 'sounds/sample13.wav' }
             },
     bind1:  { text: "bind (evaluated): ??",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (79) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (79) }
+              sound: { type: 'sample', url: 'sounds/sample14.wav' }
             },
     iscons0:{ text: "pair constructor test: evaluate sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (81) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (81) }
+              sound: { type: 'sample', url: 'sounds/sample15.wav' }
             },
     iscons1:{ text: "pair constructor test: return 0 or 1",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (83) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (83) }
+              sound: { type: 'sample', url: 'sounds/sample16.wav' }
             },
     car0:   { text: "left-side pair deconstructor: evaluate left sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (84) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (84) }
+              sound: { type: 'sample', url: 'sounds/sample17.wav' }
             },
     car1:    { text: "??",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (48) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (48) }
+              sound: { type: 'sample', url: 'sounds/sample18.wav' }
             },
     cdr0:   { text: "right-side pair deconstructor: evaluate right sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (50) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (50) }
+              sound: { type: 'sample', url: 'sounds/sample19.wav' }
             },
     cdr1:    { text: "??",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (52) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (52) }
+              sound: { type: 'sample', url: 'sounds/sample20.wav' }
             },
     cons0:  { text: "pair constructor: return",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (53) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (53) }
+              sound: { type: 'sample', url: 'sounds/sample21.wav' }
             },
     cons1:    { text: "??",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (55) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (55) }
+              sound: { type: 'sample', url: 'sounds/sample22.wav' }
             },
     cons2:    { text: "??",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (57) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (57) }
+              sound: { type: 'sample', url: 'sounds/sample23.wav' }
             },
     cons3:  { text: "??",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (59) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (59) }
+              sound: { type: 'sample', url: 'sounds/sample24.wav' }
             },
     thunk0: { text: "unevaluated thunk: evaluate sub-expression",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (47) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (47) }
+              sound: { type: 'sample', url: 'sounds/sample25.wav' }
             },
     thunk1: { text: "evaluated thunk: replace by value",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (45) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (45) }
+              sound: { type: 'sample', url: 'sounds/sample26.wav' }
             },
     abs:    { text: "abstraction: return",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (43) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (43) }
+              sound: { type: 'sample', url: 'sounds/sample27.wav' }
             },
     num:    { text: "number: return",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (86), dur: 0.15 }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (86), dur: 0.15 }
+              sound: { type: 'sample', url: 'sounds/sample28.wav' }
             },
     unit:   { text: "unit constructor: return",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (41) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (41) }
+              sound: { type: 'sample', url: 'sounds/sample29.wav' }
             },
     par:    { text: "par",
-              sound: { synth: 'beep', frequency: SoundPlayer.midicps (80) }
+              //sound: { type: 'beep', frequency: SoundPlayer.midicps (80) }
+              sound: { type: 'sample', url: 'sounds/sample30.wav' }
             },
     block:  { text: "block",
-              sound: { synth: 'silence', frequency: SoundPlayer.midicps (20) }
+              sound: { type: 'silence', frequency: SoundPlayer.midicps (20) }
             }
     };
 

@@ -100,19 +100,23 @@ examples:
 <div class="group">
 tempo:
 fast
-<input type="range" value="500" min="25" max="2000" step="5" onchange="main.interval = this.value">
+<input type="range" value="15" min="5" max="50" step="0.1" oninput="main.interval = this.value * this.value">
 slow
 </div>
 
 <div class="group">
 volume:
-<input type="range" value="0.5" min="0.0" max="1.0" step="0.05" onchange="main.setVolume (this.value)">
+<input type="range" value="0.5" min="0.0" max="1.0" step="0.05" oninput="main.setVolume (this.value)">
 </div>
 
 <div class="group">
-frequencies:<a href="javascript:void(0)" onclick="LamMain.randomizeFrequencies()">randomize</a>
-</div>
 
+Soundbanks: 
+<a href="javascript:void(0)" onclick="main.loadSoundBank('sounds/soundbank1.json')">1</a>
+<a href="javascript:void(0)" onclick="main.loadSoundBank('sounds/soundbank2.json')">2</a>
+<a href="javascript:void(0)" onclick="main.loadSoundBank('sounds/soundbank3.json')">3</a>
+<a href="javascript:void(0)" onclick="main.soundplayer.shuffleSamples()">randomize</a>
+</div>
 </div>
 <canvas id="can1" width="800" height="600"></canvas>
 <br>

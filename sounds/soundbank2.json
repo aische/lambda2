@@ -1,0 +1,152 @@
+{ 
+	"op0"    :{
+		"type": "sample",
+		"url": "sounds/sample1.wav"
+		
+		}, 
+	"op1"    :{
+		"type": "sample",
+		"url": "sounds/sample2.wav"
+		
+		}, 
+	"op1_0"  :{
+		"type": "sample",
+		"url": "sounds/sample3.wav"
+		
+		}, 
+	"op2"    :{
+		"type": "sample",
+		"url": "sounds/sample4.wav"
+		
+		}, 
+	"op2_0"  :{
+		"type": "sample",
+		"url": "sounds/sample5.wav"
+		
+		},
+    "app0"   :{
+    	"type": "sample",
+    	"url": "sounds/sample6.wav"
+    	
+    	},    
+    "app1"   :{
+    	"type": "sample",
+    	"url": "sounds/sample7.wav"
+    	
+    	},    
+    "if0"    :{
+    	"type": "sample",
+    	"url": "sounds/sample8.wav"
+    	
+    	},    
+    "if1"    :{
+    	"type": "sample",
+    	"url": "sounds/sample9.wav"
+    	
+    	},    
+    "rec"    :{
+    	"type": "sample",
+    	"url": "sounds/sample10.wav"
+    	
+    	},    
+    "bind0"  :{
+    	"type": "sample",
+    	"url": "sounds/sample11.wav"
+    	
+    	},    
+    "bind1"  :{
+    	"type": "sample",
+    	"url": "sounds/sample12.wav"
+    	
+    	},
+    "iscons0":{
+    	"type": "sample",
+    	"url": "sounds/sample13.wav"
+    	
+    	},    
+    "iscons1":{
+    	"type": "sample",
+    	"url": "sounds/sample14.wav"
+    	
+    	},    
+    "car0"   :{
+    	"type": "sample",
+    	"url": "sounds/sample15.wav"
+    	
+    	},    
+    "car1"   :{
+    	"type": "sample",
+    	"url": "sounds/sample16.wav"
+    	
+    	},    
+    "cdr0"   :{
+    	"type": "sample",
+    	"url": "sounds/sample17.wav"
+    	
+    	},    
+    "cdr1"   :{
+    	"type": "sample",
+    	"url": "sounds/sample18.wav"
+    	
+    	},
+    "cons0"  :{
+    	"type": "sample",
+    	"url": "sounds/sample19.wav"
+    	
+    	}, 
+    "cons1"  :{
+    	"type": "sample",
+    	"url": "sounds/sample20.wav"
+    	
+    	}, 
+    "cons2"  :{
+    	"type": "sample",
+    	"url": "sounds/sample21.wav"
+    	
+    	}, 
+    "cons3"  :{
+    	"type": "sample",
+    	"url": "sounds/sample22.wav"
+    	
+    	},   
+    "thunk0" :{
+    	"type": "sample",
+    	"url": "sounds/sample23.wav"
+    	
+    	}, 
+    "thunk1" :{
+    	"type": "sample",
+    	"url": "sounds/sample24.wav"
+    	
+    	}, 
+    "abs"    :{
+    	"type": "sample",
+    	"url": "sounds/sample25.wav"
+    	
+    	}, 
+    "num"    :{
+    	"type": "sample",
+    	"url": "sounds/sample26.wav"
+    	
+    	}, 
+    "unit"   :{
+    	"type": "sample",
+    	"url": "sounds/sample27.wav"
+    	
+    	},
+    "freevar":{
+    	"type": "sample",
+    	"url": "sounds/sample28.wav"
+    	
+    	}, 
+    "par"    :{
+    	"type": "sample",
+    	"url": "sounds/sample29.wav"
+    	
+    	}, 
+    "block"  :{
+    	"type": "sample",
+    	"url": "sounds/sample30.wav"
+    	
+    }
+ }

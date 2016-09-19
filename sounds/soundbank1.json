@@ -1,0 +1,152 @@
+{ 
+	"op0"    :{
+		"type": "beep",
+		"note": 36,
+		"dur": 0.02
+		}, 
+	"op1"    :{
+		"type": "beep",
+		"note": 38,
+		"dur": 0.02
+		}, 
+	"op1_0"  :{
+		"type": "beep",
+		"note": 40,
+		"dur": 0.02
+		}, 
+	"op2"    :{
+		"type": "beep",
+		"note": 41,
+		"dur": 0.02
+		}, 
+	"op2_0"  :{
+		"type": "beep",
+		"note": 43,
+		"dur": 0.02
+		},
+    "app0"   :{
+    	"type": "beep",
+    	"note": 45,
+    	"dur": 0.02
+    	},    
+    "app1"   :{
+    	"type": "beep",
+    	"note": 47,
+    	"dur": 0.02
+    	},    
+    "if0"    :{
+    	"type": "beep",
+    	"note": 48,
+    	"dur": 0.02
+    	},    
+    "if1"    :{
+    	"type": "beep",
+    	"note": 50,
+    	"dur": 0.02
+    	},    
+    "rec"    :{
+    	"type": "beep",
+    	"note": 52,
+    	"dur": 0.02
+    	},    
+    "bind0"  :{
+    	"type": "beep",
+    	"note": 53,
+    	"dur": 0.02
+    	},    
+    "bind1"  :{
+    	"type": "beep",
+    	"note": 55,
+    	"dur": 0.02
+    	},
+    "iscons0":{
+    	"type": "beep",
+    	"note": 57,
+    	"dur": 0.02
+    	},    
+    "iscons1":{
+    	"type": "beep",
+    	"note": 59,
+    	"dur": 0.02
+    	},    
+    "car0"   :{
+    	"type": "beep",
+    	"note": 60,
+    	"dur": 0.02
+    	},    
+    "car1"   :{
+    	"type": "beep",
+    	"note": 62,
+    	"dur": 0.02
+    	},    
+    "cdr0"   :{
+    	"type": "beep",
+    	"note": 64,
+    	"dur": 0.02
+    	},    
+    "cdr1"   :{
+    	"type": "beep",
+    	"note": 65,
+    	"dur": 0.02
+    	},
+    "cons0"  :{
+    	"type": "beep",
+    	"note": 67,
+    	"dur": 0.02
+    	}, 
+    "cons1"  :{
+    	"type": "beep",
+    	"note": 69,
+    	"dur": 0.02
+    	}, 
+    "cons2"  :{
+    	"type": "beep",
+    	"note": 71,
+    	"dur": 0.02
+    	}, 
+    "cons3"  :{
+    	"type": "beep",
+    	"note": 72,
+    	"dur": 0.02
+    	},   
+    "thunk0" :{
+    	"type": "beep",
+    	"note": 74,
+    	"dur": 0.02
+    	}, 
+    "thunk1" :{
+    	"type": "beep",
+    	"note": 76,
+    	"dur": 0.02
+    	}, 
+    "abs"    :{
+    	"type": "beep",
+    	"note": 77,
+    	"dur": 0.02
+    	}, 
+    "num"    :{
+    	"type": "beep",
+    	"note": 79,
+    	"dur": 0.02
+    	}, 
+    "unit"   :{
+    	"type": "beep",
+    	"note": 81,
+    	"dur": 0.02
+    	},
+    "freevar":{
+    	"type": "beep",
+    	"note": 83,
+    	"dur": 0.02
+    	}, 
+    "par"    :{
+    	"type": "beep",
+    	"note": 84,
+    	"dur": 0.02
+    	}, 
+    "block"  :{
+    	"type": "beep",
+    	"note": 86,
+    	"dur": 0.02
+    }
+ }
