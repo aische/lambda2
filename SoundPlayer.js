@@ -3,7 +3,7 @@ function SoundPlayer () {
     this.audiocontext = new AudioContext ();
     this.destination = this.audiocontext.createGain ();
     this.destination.connect (this.audiocontext.destination);
-    this.destination.gain.value = 0.5;
+    this.destination.gain.value = 0.0;
     
     this.sounds = {};
 }
