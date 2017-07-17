@@ -63,6 +63,7 @@ LamMain.prototype.loadFile = function (url) {
     var self = this;
     var x = new XMLHttpRequest ();
     x.open("GET", url, true);
+    x.responseType = "text";
     x.onreadystatechange = function () {
         if (x.readyState == 4 && x.status == 200) {
             self.textarea.value = x.responseText;
