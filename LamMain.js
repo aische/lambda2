@@ -42,6 +42,7 @@ LamMain.prototype.incVolume = function () {
     if (this.soundplayer) {
         var volume = Math.min (1.0, this.soundplayer.destination.gain.value + 0.1);
         this.soundplayer.destination.gain.value = volume;
+        document.getElementById("volumeslider").value = volume;
     };
 };
 
@@ -49,6 +50,7 @@ LamMain.prototype.decVolume = function () {
     if (this.soundplayer) {
         var volume = Math.max (0.0, this.soundplayer.destination.gain.value - 0.1);
         this.soundplayer.destination.gain.value = volume;
+        document.getElementById("volumeslider").value = volume;
     };
 };
 

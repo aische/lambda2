@@ -1,6 +1,6 @@
 
 function SoundPlayer () {
-    this.audiocontext = new AudioContext ();
+    this.audiocontext = new (window.AudioContext || window.webkitAudioContext)();
     this.destination = this.audiocontext.createGain ();
     this.destination.connect (this.audiocontext.destination);
     this.destination.gain.value = 0.0;
