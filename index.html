@@ -100,7 +100,7 @@ examples:
 <div class="group">
 tempo:
 fast
-<input type="range" value="15" min="5" max="50" step="0.1" oninput="main.interval = this.value * this.value">
+<input type="range" value="15" min="2" max="50" step="0.1" oninput="main.interval = this.value * this.value">
 slow
 </div>
 
@@ -118,6 +118,7 @@ Soundbanks:
 <a href="javascript:void(0)" onclick="main.loadSoundBank('sounds/soundbank2.json')">2</a>
 <a href="javascript:void(0)" onclick="main.loadSoundBank('sounds/soundbank3.json')">3</a>
 <a href="javascript:void(0)" onclick="main.soundplayer.shuffleSamples()">randomize</a>
+<input type="checkbox" id="latencyCheckbox" onchange="main.toggleLatency(this)" title="adds latency of 0.2 seconds for precise timing"/>precise timing
 </div>
 </div>
 <canvas id="can1" width="800" height="600"></canvas>
@@ -163,3 +164,6 @@ syntactic sugar:
 </pre>
 </body>
 </html>
+<script>
+document.getElementById('latencyCheckbox').checked = false;
+</script>

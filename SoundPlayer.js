@@ -6,6 +6,7 @@ function SoundPlayer () {
     this.destination.gain.value = 0.0;
     
     this.sounds = {};
+    this.latency = 0;
 }
 
 SoundPlayer.midicps = function (note) {
@@ -41,28 +42,30 @@ SoundPlayer.prototype.setSoundSample = function (key, url) {
 	});
 }
 
-SoundPlayer.prototype.playSound = function (key) {
+SoundPlayer.prototype.playSound = function (key, logicalTime) {
+    logicalTime = logicalTime || 0;
+    const now = this.latency ? logicalTime + this.latency : this.audiocontext.currentTime;
 	if (this.sounds[key]) {
 		var obj = this.sounds[key];
 		switch (obj.type) {
 			case 'beep':
-				this.playBeep (obj.frequency, obj.dur);
+				this.playBeep (obj.frequency, obj.dur, now);
 				return;
 			case 'sample':
-				this.playBuffer (obj.buffer);
+				this.playBuffer (obj.buffer, now);
 				return;
 		}
 	}
 }
 
-SoundPlayer.prototype.playBuffer = function (buffer) {
+SoundPlayer.prototype.playBuffer = function (buffer, now) {
     var source = this.audiocontext.createBufferSource();
     source.buffer = buffer;
     source.connect(this.destination);
-    source.start(0);
+    source.start(now);
 }
 
-SoundPlayer.prototype.playBeep = function (freq, dur) {
+SoundPlayer.prototype.playBeep = function (freq, dur, now) {
     dur = dur || 0.1;
     dur += (Math.random () * 0.1);
     var am = freq / 10000;
@@ -81,7 +84,7 @@ SoundPlayer.prototype.playBeep = function (freq, dur) {
     osc2.connect (filt);
     filt.connect (gain);
     gain.connect (this.destination);
-    var now = this.audiocontext.currentTime;
+    // var now = this.audiocontext.currentTime;
     osc.start (now);
     osc.stop (now + dur);
     osc2.start (now + (0.005 * Math.random ()));
