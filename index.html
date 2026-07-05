@@ -174,7 +174,7 @@
                 <input
                     type="range"
                     value="15"
-                    min="5"
+                    min="2"
                     max="50"
                     step="0.1"
                     oninput="main.interval = this.value * this.value"
@@ -229,6 +229,12 @@
                     onclick="main.soundplayer.shuffleSamples()"
                     >randomize</a
                 >
+                <input
+                    type="checkbox"
+                    id="latencyCheckbox"
+                    onchange="main.toggleLatency(this)"
+                    title="adds latency of 0.2 seconds for precise timing"
+                />precise timing
             </div>
         </div>
         <canvas id="can1" width="800" height="600"></canvas>
@@ -275,3 +281,6 @@ syntactic sugar:
         >
     </body>
 </html>
+<script>
+    document.getElementById("latencyCheckbox").checked = false;
+</script>

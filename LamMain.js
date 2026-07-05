@@ -242,6 +242,15 @@ LamMain.prototype.run = function () {
 };
 
 LamMain.prototype.runLoop = function () {
+    if (this.soundplayer && this.soundplayer.latency) {
+        const startTime = this.soundplayer.audiocontext.currentTime;
+        this.runLoopWithLatency (this.soundplayer, startTime, 0);
+    } else {
+        this.runLoopWithoutLatency ();
+    }
+};
+
+LamMain.prototype.runLoopWithoutLatency = function () {
     if (this.running && this.evaluator) {
         if (this.currentsteps) {
             if (this.soundplayer) {
@@ -267,10 +276,49 @@ LamMain.prototype.runLoop = function () {
             if (ok) {
                 self.currentsteps = self.evaluator.step ();
                 self.draw ();
-                self.runLoop ()
+                self.runLoopWithoutLatency ()
             }
         }, this.interval);
     };
+};
+
+LamMain.prototype.runLoopWithLatency = function (soundplayer, startTime, logicalTime) {
+    if (this.running && this.evaluator) {
+        if (this.currentsteps) {
+            for (var i=0; i<this.currentsteps.length; i++) {
+                //this.soundplayer.playSynth (LamMain.stepinfo[this.currentsteps[i].name].sound);
+                soundplayer.playSound (this.currentsteps[i].name, startTime + logicalTime);
+            }
+        }
+        if (this.currentstep == false) {
+            this.stop ();
+            return;
+        };
+        var self = this;
+        const seconds = this.interval / 1000;
+        const elapsedTime = soundplayer.audiocontext.currentTime - startTime;
+        const ahead = elapsedTime - logicalTime;
+        const waitTime = Math.max(0, seconds - ahead);
+        logicalTime += seconds;
+
+        this.timer = setTimeout (function () {
+            var ok = self.currentsteps[0].action ();
+            for (var i=1; i<self.currentsteps.length; i++) {
+                self.currentsteps[i].action ();
+            }
+            if (ok) {
+                self.currentsteps = self.evaluator.step ();
+                self.draw ();
+                self.runLoopWithLatency (soundplayer, startTime, logicalTime)
+            }
+        }, waitTime * 1000);
+    };
+};
+
+LamMain.prototype.toggleLatency = function (e) {
+    if (this.soundplayer) {
+        this.soundplayer.latency = e.checked ? 0.2 : 0;
+    }
 };
 
 LamMain.prototype.stop = function () {
