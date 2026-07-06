@@ -240,8 +240,11 @@ LamMain.prototype.run = function () {
     this.running = true;
     this.runLoop ();
 };
+var ps = [];
 
 LamMain.prototype.runLoop = function () {
+    console.log("runLoop")
+    ps = [];
     if (this.soundplayer && this.soundplayer.latency) {
         const startTime = this.soundplayer.audiocontext.currentTime;
         this.runLoopWithLatency (this.soundplayer, startTime, 0);
@@ -533,6 +536,8 @@ LamMain.stepinfo = {
             }
     };
 
+var keymap = {};
+Object.keys(LamMain.stepinfo).map((k,i) => keymap[k] = i);
 
 LamMain.randomizeFrequencies = function () {
     var i = 0;
