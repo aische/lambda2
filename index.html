@@ -4,33 +4,90 @@
         <meta charset="utf-8" />
         <title>animated lambda calculus evaluator (javascript)</title>
         <style>
-            canvas {
-                border: 1px solid green;
+            body {
+                margin: 8px;
+                font-family: system-ui, -apple-system, sans-serif;
             }
             textarea {
-                font-family: Courier;
+                font-family: Courier, monospace;
                 width: 100%;
+                box-sizing: border-box;
+                min-height: 6em;
             }
-            a.button {
-                border: 1px solid gray;
-                padding: 2px;
-                background-color: #cdcdcd;
-                position: relative;
-                display: inline-block;
-                width: 30px;
-                text-align: center;
-                text-decoration: none;
+            canvas {
+                display: block;
+                width: 100%;
+                border: 1px solid #aaa;
+                box-sizing: border-box;
+            }
+            #toolbar {
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                padding: 3px 6px;
+                margin: 4px 0;
+                background: #f4f4f4;
+                font-size: 12px;
+                line-height: 1.2;
+            }
+            .toolbar-line {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 4px 8px;
+            }
+            .inline {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                white-space: nowrap;
+            }
+            .sep {
+                color: #bbb;
+                user-select: none;
+            }
+            .btn {
+                padding: 1px 6px;
+                border: 1px solid #999;
+                border-radius: 2px;
+                background: #eee;
+                cursor: pointer;
+                font-size: 12px;
+                font-family: inherit;
+                line-height: 1.4;
+            }
+            .btn:hover {
+                background: #e0e0e0;
+            }
+            .btn-primary {
+                background: #d8e6f6;
+                border-color: #7a9cc6;
+            }
+            .status {
+                margin: 2px 0 0;
+                font-size: 11px;
+                color: #555;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .status-error {
+                color: #a00;
             }
             input[type="range"] {
-                position: relative;
-                display: inline-block;
-                top: 10px;
+                width: 72px;
+                height: 14px;
+                vertical-align: middle;
             }
-            div.group {
-                display: inline-block;
-                white-space: nowrap;
-                padding-right: 8px;
-                margin-bottom: 4px;
+            select {
+                font-family: inherit;
+                font-size: 12px;
+                max-width: 11em;
+            }
+            #examples {
+                max-width: 13em;
+            }
+            #soundbank {
+                max-width: 3.5em;
             }
         </style>
         <script type="text/javascript" src="LamParser.js"></script>
@@ -43,202 +100,95 @@
     </head>
     <body onload="init()">
         <textarea id="ta1"></textarea>
-        <br />
-        <div style="background-color: #efefef">
-            <div class="group">
-                (re)load:
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setLambdaStringFromTextarea('cbn')"
-                    title="load string from textarea"
-                    >cbn</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setLambdaStringFromTextarea('cbv')"
-                    title="load string from textarea"
-                    >cbv</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setLambdaStringFromTextarea('lazy')"
-                    title="load string from textarea"
-                    >lazy</a
-                >
-            </div>
 
-            <div class="group">
-                run:
-                <a class="button" href="javascript:void(0)" onclick="main.run()"
-                    >play</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.stop()"
-                    >stop</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.step()"
-                    >step</a
-                >
+        <nav id="toolbar" aria-label="Evaluator controls">
+            <div class="toolbar-line">
+                <label class="inline">Example
+                    <select id="examples" onchange="main.loadFileSel(this)">
+                        <optgroup label="Basics">
+                            <option>simple function I</option>
+                            <option>simple function II</option>
+                            <option>simple function III</option>
+                            <option>simple function IV</option>
+                        </optgroup>
+                        <optgroup label="Recursion">
+                            <option>fibonacci numbers I</option>
+                            <option>fibonacci numbers II</option>
+                            <option>fibonacci numbers III</option>
+                            <option>prime numbers</option>
+                            <option>'quick'-sort</option>
+                            <option>mutual recursion</option>
+                        </optgroup>
+                        <optgroup label="Parallel (lazy)">
+                            <option>parallel evaluation I</option>
+                            <option>parallel evaluation II</option>
+                            <option>parallel evaluation III</option>
+                            <option>parallel evaluation IV</option>
+                            <option>parallel evaluation V</option>
+                        </optgroup>
+                        <optgroup label="Advanced">
+                            <option>natural numbers</option>
+                            <option>ackerman function</option>
+                            <option>merge sort</option>
+                        </optgroup>
+                    </select>
+                </label>
+                <label class="inline">Evaluation
+                    <select id="strategy" onchange="updateStrategyHint()"
+                        title="How function application and data structures are evaluated">
+                        <option value="cbn">by name</option>
+                        <option value="cbv">by value</option>
+                        <option value="lazy" selected>lazy</option>
+                    </select>
+                </label>
+                <button type="button" class="btn" onclick="loadWithStrategy()"
+                    title="Parse the program from the editor and reset evaluation">(Re-)Load</button>
+                <span class="sep">|</span>
+                <button type="button" class="btn btn-primary" onclick="main.run()"
+                    title="Run reductions automatically">Run</button>
+                <button type="button" class="btn" onclick="main.stop()"
+                    title="Stop automatic evaluation">Stop</button>
+                <button type="button" class="btn" onclick="main.step()"
+                    title="Perform one reduction step">Step</button>
+                <span class="sep">|</span>
+                <span class="inline">Zoom
+                    <button type="button" class="btn" onclick="main.decZoom()" title="Zoom out">−</button>
+                    <button type="button" class="btn" onclick="main.incZoom()" title="Zoom in">+</button>
+                    <button type="button" class="btn" onclick="main.setZoom(1)" title="Reset zoom">↺</button>
+                </span>
+                <button type="button" class="btn" onclick="main.setDisplay(0, 0)"
+                    title="Center the canvas view">center</button>
+                <label class="inline">Speed
+                    <input id="speed" type="range" value="33" min="2" max="50" step="0.1"
+                        title="Step speed: slow (~0.4s) on the left, fast (~0.004s) on the right"
+                        oninput="setSpeedFromSlider(this)" />
+                </label>
+                <span class="sep">|</span>
+                <label class="inline">Volume
+                    <input id="volumeslider" type="range" value="0.0" min="0.0" max="1.0" step="0.05"
+                        oninput="main.setVolume(this.value)" />
+                </label>
+                <label class="inline">Soundbank
+                    <select id="soundbank" onchange="main.loadSoundBank(this.value)">
+                        <option value="sounds/soundbank1.json">1</option>
+                        <option value="sounds/soundbank2.json">2</option>
+                        <option value="sounds/soundbank3.json">3</option>
+                    </select>
+                </label>
+                <button type="button" class="btn"
+                    onclick="main.soundplayer && main.soundplayer.shuffleSamples()"
+                    title="Randomly reassign sounds to reduction steps">↻</button>
+                <label class="inline">
+                    <input type="checkbox" id="latencyCheckbox" onchange="main.toggleLatency(this)"
+                        title="Add ~200ms latency so step sounds stay in sync during Run" />
+                    sync
+                </label>
             </div>
+            <div id="toolbar-status" class="status" aria-live="polite">Load to start</div>
+        </nav>
 
-            <div class="group">
-                zoom:
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.decZoom()"
-                    >-</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.incZoom()"
-                    >+</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setZoom(1)"
-                    >reset</a
-                >
-            </div>
-
-            <div class="group">
-                move display:
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(-200, 0)"
-                    >&lt;-</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(200, 0)"
-                    >-&gt;</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(0, -200)"
-                    >^</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(0, 200)"
-                    >v</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setDisplay(0, 0)"
-                    >reset</a
-                >
-            </div>
-
-            <div class="group">
-                examples:
-                <select onchange="main.loadFileSel(this)">
-                    <option>simple function I</option>
-                    <option>simple function II</option>
-                    <option>simple function III</option>
-                    <option>simple function IV</option>
-                    <option>fibonacci numbers I</option>
-                    <option>fibonacci numbers II</option>
-                    <option>fibonacci numbers III</option>
-                    <option>prime numbers</option>
-                    <option>'quick'-sort</option>
-                    <option>mutual recursion</option>
-                    <option>parallel evaluation I</option>
-                    <option>parallel evaluation II</option>
-                    <option>parallel evaluation III</option>
-                    <option>parallel evaluation IV</option>
-                    <option>parallel evaluation V</option>
-                    <option>natural numbers</option>
-                    <option>ackerman function</option>
-                    <option>merge sort</option>
-                </select>
-            </div>
-
-            <div class="group">
-                tempo: fast
-                <input
-                    type="range"
-                    value="15"
-                    min="2"
-                    max="50"
-                    step="0.1"
-                    oninput="main.interval = this.value * this.value"
-                />
-                slow
-            </div>
-
-            <div class="group">
-                volume:
-                <input
-                    id="volumeslider"
-                    type="range"
-                    value="0.0"
-                    min="0.0"
-                    max="1.0"
-                    step="0.05"
-                    oninput="main.setVolume(this.value)"
-                />
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.decVolume()"
-                    >-</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.incVolume()"
-                    >+</a
-                >
-            </div>
-
-            <div class="group">
-                Soundbanks:
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.loadSoundBank('sounds/soundbank1.json')"
-                    >1</a
-                >
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.loadSoundBank('sounds/soundbank2.json')"
-                    >2</a
-                >
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.loadSoundBank('sounds/soundbank3.json')"
-                    >3</a
-                >
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.soundplayer.shuffleSamples()"
-                    >randomize</a
-                >
-                <input
-                    type="checkbox"
-                    id="latencyCheckbox"
-                    onchange="main.toggleLatency(this)"
-                    title="adds latency of 0.2 seconds for precise timing"
-                />precise timing
-            </div>
-        </div>
-        <canvas id="can1" width="800" height="600"></canvas>
-        <br />
+        <canvas id="can1" width="800" height="600"
+            title="Drag to pan. Click a subterm to focus (not in lazy mode)."></canvas>
 
         <pre>
 T =
@@ -281,6 +231,3 @@ syntactic sugar:
         >
     </body>
 </html>
-<script>
-    document.getElementById("latencyCheckbox").checked = false;
-</script>
