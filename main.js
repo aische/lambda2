@@ -3,7 +3,7 @@ var main;
 
 var strategyHints = {
     cbn: "Substitute arguments without evaluating them first.",
-    cbv: "Evaluate the argument before applying the function.",
+    cbv: "Evaluate the argument before applying the function. Recursive programs often do not terminate — the term keeps growing.",
     lazy: "Lazy thunks and pairs; required for par examples."
 };
 

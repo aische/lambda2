@@ -8,6 +8,13 @@
                 margin: 8px;
                 font-family: system-ui, -apple-system, sans-serif;
             }
+            html {
+                scroll-behavior: smooth;
+            }
+            #toolbar,
+            #help {
+                scroll-margin-top: 8px;
+            }
             textarea {
                 font-family: Courier, monospace;
                 width: 100%;
@@ -73,6 +80,48 @@
             .status-error {
                 color: #a00;
             }
+            .toolbar-hint {
+                margin: 0 0 4px;
+                font-size: 11px;
+                color: #666;
+                line-height: 1.35;
+            }
+            .toolbar-hint .help-link {
+                margin-left: 0.5em;
+            }
+            .help-link {
+                font-size: 12px;
+                color: #345;
+            }
+            .help-section,
+            .reference-section {
+                margin-top: 1.5em;
+                font-size: 14px;
+                line-height: 1.45;
+                max-width: 52em;
+            }
+            .help-section h2,
+            .reference-section h2 {
+                font-size: 1.05em;
+                margin: 0 0 0.5em;
+            }
+            .help-section ul {
+                margin: 0.5em 0;
+                padding-left: 1.4em;
+            }
+            .help-section li {
+                margin-bottom: 0.35em;
+            }
+            .back-link {
+                display: inline-block;
+                margin-top: 0.75em;
+                font-size: 13px;
+            }
+            .reference-section pre {
+                font-family: Courier, monospace;
+                font-size: 13px;
+                overflow-x: auto;
+            }
             input[type="range"] {
                 width: 72px;
                 height: 14px;
@@ -102,6 +151,10 @@
         <textarea id="ta1"></textarea>
 
         <nav id="toolbar" aria-label="Evaluator controls">
+            <p class="toolbar-hint">
+                Select an example and evaluation strategy, click (Re-)Load, then Run or Step.
+                <a href="#help" class="help-link" title="How to use this evaluator">Help</a>
+            </p>
             <div class="toolbar-line">
                 <label class="inline">Example
                     <select id="examples" onchange="main.loadFileSel(this)">
@@ -180,8 +233,8 @@
                     title="Randomly reassign sounds to reduction steps">↻</button>
                 <label class="inline">
                     <input type="checkbox" id="latencyCheckbox" onchange="main.toggleLatency(this)"
-                        title="Add ~200ms latency so step sounds stay in sync during Run" />
-                    sync
+                        title="Add ~200ms latency for precise audio timing during Run" />
+                    precise audio timing
                 </label>
             </div>
             <div id="toolbar-status" class="status" aria-live="polite">Load to start</div>
@@ -190,7 +243,23 @@
         <canvas id="can1" width="800" height="600"
             title="Drag to pan. Click a subterm to focus (not in lazy mode)."></canvas>
 
-        <pre>
+        <section id="help" class="help-section">
+            <h2>How to use</h2>
+            <ol>
+                <li>Pick an <strong>Example</strong> from the dropdown, or edit the program in the text area above.</li>
+                <li>Choose an <strong>Evaluation</strong> strategy (lazy is the default; parallel examples need lazy).</li>
+                <li>Click <strong>(Re-)Load</strong> to parse the program and reset evaluation.</li>
+                <li>Click <strong>Run</strong> for automatic step-by-step reduction, or <strong>Step</strong> for one step at a time.</li>
+            </ol>
+            <p><strong>Evaluation strategies:</strong> <strong>Call-by-value</strong> usually does not terminate on recursive programs (e.g. fibonacci) — the expression keeps growing instead of reducing to a result. Use <strong>lazy</strong> or <strong>call-by-name</strong> for those examples. Parallel examples require <strong>lazy</strong>.</p>
+            <p><strong>Canvas:</strong> drag to pan; click a subterm to focus evaluation (call-by-name and call-by-value only). The red label marks the subexpression reduced next.</p>
+            <p><strong>Sound:</strong> turn up Volume to hear each reduction; enable precise audio timing when using Run with sound.</p>
+            <a href="#toolbar" class="back-link">Back to controls</a>
+        </section>
+
+        <section id="reference" class="reference-section">
+            <h2>Language reference</h2>
+            <pre>
 T =
     x                       names ([a-z]+) like x, y, abc, foo, bar, baz
     @ T T                   application
@@ -227,7 +296,8 @@ syntactic sugar:
     let x = T1 in T2        ==&gt;  @ (\x.T2) T1
     letrec x = T1 in T2     ==&gt;  @ (\x.T2) (Yx.T1)
 
-</pre
-        >
+</pre>
+            <a href="#toolbar" class="back-link">Back to controls</a>
+        </section>
     </body>
 </html>
