@@ -4,33 +4,155 @@
         <meta charset="utf-8" />
         <title>animated lambda calculus evaluator (javascript)</title>
         <style>
-            canvas {
-                border: 1px solid green;
+            body {
+                margin: 8px;
+                font-family: system-ui, -apple-system, sans-serif;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            #toolbar,
+            #help {
+                scroll-margin-top: 8px;
             }
             textarea {
-                font-family: Courier;
+                font-family: Courier, monospace;
                 width: 100%;
+                box-sizing: border-box;
+                min-height: 6em;
             }
-            a.button {
-                border: 1px solid gray;
-                padding: 2px;
-                background-color: #cdcdcd;
-                position: relative;
+            canvas {
+                display: block;
+                width: 100%;
+                border: 1px solid #aaa;
+                box-sizing: border-box;
+            }
+            #toolbar {
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                padding: 3px 6px;
+                margin: 4px 0;
+                background: #f4f4f4;
+                font-size: 12px;
+                line-height: 1.2;
+            }
+            .toolbar-line {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 4px 8px;
+            }
+            .inline {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                white-space: nowrap;
+            }
+            .sep {
+                color: #bbb;
+                user-select: none;
+            }
+            .btn {
+                padding: 1px 6px;
+                border: 1px solid #999;
+                border-radius: 2px;
+                background: #eee;
+                cursor: pointer;
+                font-size: 12px;
+                font-family: inherit;
+                line-height: 1.4;
+            }
+            .btn:hover {
+                background: #e0e0e0;
+            }
+            .btn-primary {
+                background: #d8e6f6;
+                border-color: #7a9cc6;
+            }
+            .status {
+                margin: 2px 0 0;
+                font-size: 11px;
+                color: #555;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .status-error {
+                color: #a00;
+            }
+            .toolbar-hint {
+                margin: 0 0 4px;
+                font-size: 11px;
+                color: #666;
+                line-height: 1.35;
+            }
+            .toolbar-hint .help-link {
+                margin-left: 0.5em;
+            }
+            .help-link {
+                font-size: 12px;
+                color: #345;
+            }
+            .help-section,
+            .reference-section {
+                margin-top: 1.5em;
+                font-size: 14px;
+                line-height: 1.45;
+                max-width: 52em;
+            }
+            .help-section h2,
+            .reference-section h2 {
+                font-size: 1.05em;
+                margin: 0 0 0.5em;
+            }
+            .help-section ul {
+                margin: 0.5em 0;
+                padding-left: 1.4em;
+            }
+            .help-section li {
+                margin-bottom: 0.35em;
+            }
+            .back-link {
                 display: inline-block;
-                width: 30px;
-                text-align: center;
-                text-decoration: none;
+                margin-top: 0.75em;
+                font-size: 13px;
+            }
+            .reference-section pre {
+                font-family: Courier, monospace;
+                font-size: 13px;
+                overflow-x: auto;
+            }
+            .output-section {
+                margin: 4px 0;
+                font-size: 13px;
+            }
+            .output-section h2 {
+                font-size: 1em;
+                margin: 0 0 2px;
+            }
+            #program-output {
+                font-family: Courier, monospace;
+                min-height: 1.2em;
+                padding: 4px 6px;
+                background: #f8f8f8;
+                border: 1px solid #ddd;
+                word-break: break-all;
             }
             input[type="range"] {
-                position: relative;
-                display: inline-block;
-                top: 10px;
+                width: 72px;
+                height: 14px;
+                vertical-align: middle;
             }
-            div.group {
-                display: inline-block;
-                white-space: nowrap;
-                padding-right: 8px;
-                margin-bottom: 4px;
+            select {
+                font-family: inherit;
+                font-size: 12px;
+                max-width: 11em;
+            }
+            #examples {
+                max-width: 13em;
+            }
+            #soundbank {
+                max-width: 3.5em;
             }
         </style>
         <script type="text/javascript" src="LamParser.js"></script>
@@ -43,204 +165,123 @@
     </head>
     <body onload="init()">
         <textarea id="ta1"></textarea>
-        <br />
-        <div style="background-color: #efefef">
-            <div class="group">
-                (re)load:
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setLambdaStringFromTextarea('cbn')"
-                    title="load string from textarea"
-                    >cbn</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setLambdaStringFromTextarea('cbv')"
-                    title="load string from textarea"
-                    >cbv</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setLambdaStringFromTextarea('lazy')"
-                    title="load string from textarea"
-                    >lazy</a
-                >
-            </div>
 
-            <div class="group">
-                run:
-                <a class="button" href="javascript:void(0)" onclick="main.run()"
-                    >play</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.stop()"
-                    >stop</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.step()"
-                    >step</a
-                >
+        <nav id="toolbar" aria-label="Evaluator controls">
+            <p class="toolbar-hint">
+                Select an example and evaluation strategy, click (Re-)Load, then Run or Step.
+                <a href="#help" class="help-link" title="How to use this evaluator">Help</a>
+            </p>
+            <div class="toolbar-line">
+                <label class="inline">Example
+                    <select id="examples" onchange="main.loadFileSel(this)">
+                        <optgroup label="Basics">
+                            <option>simple function I</option>
+                            <option>simple function II</option>
+                            <option>simple function III</option>
+                            <option>simple function IV</option>
+                        </optgroup>
+                        <optgroup label="Recursion">
+                            <option>fibonacci numbers I</option>
+                            <option>fibonacci numbers II</option>
+                            <option>fibonacci numbers III</option>
+                            <option>prime numbers</option>
+                            <option>'quick'-sort</option>
+                            <option>mutual recursion</option>
+                        </optgroup>
+                        <optgroup label="Parallel (lazy)">
+                            <option>parallel evaluation I</option>
+                            <option>parallel evaluation II</option>
+                            <option>parallel evaluation III</option>
+                            <option>parallel evaluation IV</option>
+                            <option>parallel evaluation V</option>
+                        </optgroup>
+                        <optgroup label="Advanced">
+                            <option>natural numbers</option>
+                            <option>ackerman function</option>
+                            <option>merge sort</option>
+                        </optgroup>
+                    </select>
+                </label>
+                <label class="inline">Evaluation
+                    <select id="strategy" onchange="updateStrategyHint()"
+                        title="How function application and data structures are evaluated">
+                        <option value="cbn">by name</option>
+                        <option value="cbv">by value</option>
+                        <option value="lazy" selected>lazy</option>
+                    </select>
+                </label>
+                <button type="button" class="btn" onclick="loadWithStrategy()"
+                    title="Parse the program from the editor and reset evaluation">(Re-)Load</button>
+                <span class="sep">|</span>
+                <button type="button" class="btn btn-primary" onclick="main.run()"
+                    title="Run reductions automatically">Run</button>
+                <button type="button" class="btn" onclick="main.stop()"
+                    title="Stop automatic evaluation">Stop</button>
+                <button type="button" class="btn" onclick="main.step()"
+                    title="Perform one reduction step">Step</button>
+                <span class="sep">|</span>
+                <span class="inline">Zoom
+                    <button type="button" class="btn" onclick="main.decZoom()" title="Zoom out">−</button>
+                    <button type="button" class="btn" onclick="main.incZoom()" title="Zoom in">+</button>
+                    <button type="button" class="btn" onclick="main.setZoom(1)" title="Reset zoom">↺</button>
+                </span>
+                <button type="button" class="btn" onclick="main.setDisplay(0, 0)"
+                    title="Center the canvas view">center</button>
+                <label class="inline">Speed
+                    <input id="speed" type="range" value="33" min="2" max="50" step="0.1"
+                        title="Step speed: slow (~0.4s) on the left, fast (~0.004s) on the right"
+                        oninput="setSpeedFromSlider(this)" />
+                </label>
+                <span class="sep">|</span>
+                <label class="inline">Volume
+                    <input id="volumeslider" type="range" value="0.0" min="0.0" max="1.0" step="0.05"
+                        oninput="main.setVolume(this.value)" />
+                </label>
+                <label class="inline">Soundbank
+                    <select id="soundbank" onchange="main.loadSoundBank(this.value)">
+                        <option value="sounds/soundbank1.json">1</option>
+                        <option value="sounds/soundbank2.json">2</option>
+                        <option value="sounds/soundbank3.json">3</option>
+                    </select>
+                </label>
+                <button type="button" class="btn"
+                    onclick="main.soundplayer && main.soundplayer.shuffleSamples()"
+                    title="Randomly reassign sounds to reduction steps">↻</button>
+                <label class="inline">
+                    <input type="checkbox" id="latencyCheckbox" onchange="main.toggleLatency(this)"
+                        title="Add ~200ms latency for precise audio timing during Run" />
+                    precise audio timing
+                </label>
             </div>
+            <div id="toolbar-status" class="status" aria-live="polite">Load to start</div>
+        </nav>
 
-            <div class="group">
-                zoom:
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.decZoom()"
-                    >-</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.incZoom()"
-                    >+</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setZoom(1)"
-                    >reset</a
-                >
-            </div>
+        <canvas id="can1" width="800" height="600"
+            title="Drag to pan. Click a subterm to focus (not in lazy mode)."></canvas>
 
-            <div class="group">
-                move display:
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(-200, 0)"
-                    >&lt;-</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(200, 0)"
-                    >-&gt;</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(0, -200)"
-                    >^</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.shiftDisplay(0, 200)"
-                    >v</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.setDisplay(0, 0)"
-                    >reset</a
-                >
-            </div>
+        <section class="output-section">
+            <h2>Output</h2>
+            <div id="program-output"></div>
+        </section>
 
-            <div class="group">
-                examples:
-                <select onchange="main.loadFileSel(this)">
-                    <option>simple function I</option>
-                    <option>simple function II</option>
-                    <option>simple function III</option>
-                    <option>simple function IV</option>
-                    <option>fibonacci numbers I</option>
-                    <option>fibonacci numbers II</option>
-                    <option>fibonacci numbers III</option>
-                    <option>prime numbers</option>
-                    <option>'quick'-sort</option>
-                    <option>mutual recursion</option>
-                    <option>parallel evaluation I</option>
-                    <option>parallel evaluation II</option>
-                    <option>parallel evaluation III</option>
-                    <option>parallel evaluation IV</option>
-                    <option>parallel evaluation V</option>
-                    <option>natural numbers</option>
-                    <option>ackerman function</option>
-                    <option>merge sort</option>
-                </select>
-            </div>
+        <section id="help" class="help-section">
+            <h2>How to use</h2>
+            <ol>
+                <li>Pick an <strong>Example</strong> from the dropdown, or edit the program in the text area above.</li>
+                <li>Choose an <strong>Evaluation</strong> strategy (lazy is the default; parallel examples need lazy).</li>
+                <li>Click <strong>(Re-)Load</strong> to parse the program and reset evaluation.</li>
+                <li>Click <strong>Run</strong> for automatic step-by-step reduction, or <strong>Step</strong> for one step at a time.</li>
+            </ol>
+            <p><strong>Evaluation strategies:</strong> <strong>Call-by-value</strong> usually does not terminate on recursive programs (e.g. fibonacci) — the expression keeps growing instead of reducing to a result. Use <strong>lazy</strong> or <strong>call-by-name</strong> for those examples. Parallel examples require <strong>lazy</strong>.</p>
+            <p><strong>Canvas:</strong> drag to pan; click a subterm to focus evaluation (call-by-name and call-by-value only). The red label marks the subexpression reduced next.</p>
+            <p><strong>Output:</strong> <strong>put</strong> writes numbers to the Output panel below the canvas (space-separated).</p>
+            <p><strong>Sound:</strong> turn up Volume to hear each reduction; enable precise audio timing when using Run with sound.</p>
+            <a href="#toolbar" class="back-link">Back to controls</a>
+        </section>
 
-            <div class="group">
-                tempo: fast
-                <input
-                    type="range"
-                    value="15"
-                    min="2"
-                    max="50"
-                    step="0.1"
-                    oninput="main.interval = this.value * this.value"
-                />
-                slow
-            </div>
-
-            <div class="group">
-                volume:
-                <input
-                    id="volumeslider"
-                    type="range"
-                    value="0.0"
-                    min="0.0"
-                    max="1.0"
-                    step="0.05"
-                    oninput="main.setVolume(this.value)"
-                />
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.decVolume()"
-                    >-</a
-                >
-                <a
-                    class="button"
-                    href="javascript:void(0)"
-                    onclick="main.incVolume()"
-                    >+</a
-                >
-            </div>
-
-            <div class="group">
-                Soundbanks:
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.loadSoundBank('sounds/soundbank1.json')"
-                    >1</a
-                >
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.loadSoundBank('sounds/soundbank2.json')"
-                    >2</a
-                >
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.loadSoundBank('sounds/soundbank3.json')"
-                    >3</a
-                >
-                <a
-                    href="javascript:void(0)"
-                    onclick="main.soundplayer.shuffleSamples()"
-                    >randomize</a
-                >
-                <input
-                    type="checkbox"
-                    id="latencyCheckbox"
-                    onchange="main.toggleLatency(this)"
-                    title="adds latency of 0.2 seconds for precise timing"
-                />precise timing
-            </div>
-        </div>
-        <canvas id="can1" width="800" height="600"></canvas>
-        <br />
-
-        <pre>
+        <section id="reference" class="reference-section">
+            <h2>Language reference</h2>
+            <pre>
 T =
     x                       names ([a-z]+) like x, y, abc, foo, bar, baz
     @ T T                   application
@@ -262,7 +303,7 @@ T =
     ceil T
     floor T
     round T
-    put T                   output to console (will be wrapped inside a return)
+    put T                   output to Output panel (will be wrapped inside a return)
     alert T                 output to alert window (will be wrapped inside a return)
 
     random                  get random number (will be wrapped inside a return)
@@ -277,10 +318,8 @@ syntactic sugar:
     let x = T1 in T2        ==&gt;  @ (\x.T2) T1
     letrec x = T1 in T2     ==&gt;  @ (\x.T2) (Yx.T1)
 
-</pre
-        >
+</pre>
+            <a href="#toolbar" class="back-link">Back to controls</a>
+        </section>
     </body>
 </html>
-<script>
-    document.getElementById("latencyCheckbox").checked = false;
-</script>

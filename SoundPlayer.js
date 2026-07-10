@@ -47,6 +47,8 @@ SoundPlayer.prototype.playSound = function (key, logicalTime) {
     const now = this.latency ? logicalTime + this.latency : this.audiocontext.currentTime;
 	if (this.sounds[key]) {
 		var obj = this.sounds[key];
+        ps.push(keymap[key]);
+
 		switch (obj.type) {
 			case 'beep':
 				this.playBeep (obj.frequency, obj.dur, now);

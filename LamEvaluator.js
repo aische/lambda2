@@ -3,12 +3,13 @@ function EStep (name, action) {
     this.action = action;
 }
 
-function Evaluator (term) {
+function Evaluator (term, output) {
     this.term = term;
     this.stack = [];
     this.counter = 0;
     this.workers = [];
     this.stackstop = 0;
+    this.output = output || function () {};
 };
 
 Evaluator.prototype.root = function () {
@@ -70,7 +71,7 @@ Evaluator.prototype.primOp1 = function (opname, n) {
         case 'floor':   return Math.floor (n);
         case 'ceil':    return Math.ceil (n);
         case 'round':   return Math.round (n);
-        case 'put':     console.log (n);
+        case 'put':     this.output (n);
                         return 0;
         case 'alert':   alert (n);
                         return 0;
@@ -291,7 +292,7 @@ Evaluator.prototype.evalThunk = function () {
 };
 
 Evaluator.prototype.evalPar = function () {
-    var worker = new Evaluator (this.term.nodes[0]);
+    var worker = new Evaluator (this.term.nodes[0], this.output);
     worker.workers = this.workers;
     this.workers.push (worker);
     this.term = this.term.nodes[1];

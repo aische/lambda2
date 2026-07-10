@@ -12,11 +12,13 @@ function LamMain (canvas, textarea) {
     this.xoffset = 0;
     this.yoffset = 0;
     this.zoom = 1;
-    this.mode = "cbn";
+    this.mode = "lazy";
     this.error = false;
 
     //this.currentstep = false;
     this.currentsteps = false;
+    this.outputStarted = false;
+    this.outputFn = function (n) { self.appendOutput (n); };
     try {
         this.soundplayer = new SoundPlayer ();
         this.loadSoundBank("sounds/soundbank1.json")
@@ -27,7 +29,7 @@ function LamMain (canvas, textarea) {
 }
 
 LamMain.prototype.resize = function (string) {
-    this.canvas.width = window.innerWidth - 32;
+    this.canvas.width = window.innerWidth - 16;
     this.canvas.height = window.innerHeight - 32;
     this.draw ();
 };
@@ -59,6 +61,21 @@ LamMain.prototype.loadFileSel = function (sel) {
 
 };
 
+LamMain.prototype.getStrategyFromUI = function () {
+    var sel = document.getElementById ("strategy");
+    if (sel) {
+        return sel.value;
+    }
+    return this.mode;
+};
+
+LamMain.prototype.syncStrategyUI = function () {
+    var sel = document.getElementById ("strategy");
+    if (sel) {
+        sel.value = this.mode;
+    }
+};
+
 LamMain.prototype.loadFile = function (url) {
     var self = this;
     var x = new XMLHttpRequest ();
@@ -67,7 +84,7 @@ LamMain.prototype.loadFile = function (url) {
     x.onreadystatechange = function () {
         if (x.readyState == 4 && x.status == 200) {
             self.textarea.value = x.responseText;
-            self.setLambdaStringFromTextarea (this.mode);
+            self.setLambdaStringFromTextarea (self.getStrategyFromUI ());
         }
     };
     x.send(null);
@@ -75,11 +92,35 @@ LamMain.prototype.loadFile = function (url) {
 
 LamMain.prototype.setLambdaStringFromTextarea = function (mode) {
     this.mode = mode || this.mode;
+    this.syncStrategyUI ();
     this.setLambdaString (this.textarea.value);
+};
+
+LamMain.prototype.clearOutput = function () {
+    var el = document.getElementById ("program-output");
+    if (el) {
+        el.textContent = "";
+    }
+    this.outputStarted = false;
+};
+
+LamMain.prototype.appendOutput = function (n) {
+    var el = document.getElementById ("program-output");
+    if (!el) {
+        return;
+    }
+    if (this.outputStarted) {
+        el.textContent += " " + n;
+    }
+    else {
+        el.textContent = "" + n;
+        this.outputStarted = true;
+    }
 };
 
 LamMain.prototype.setLambdaString = function (string) {
     this.stop ();
+    this.clearOutput ();
     this.textarea.value = string;
     var lazy = this.mode == "lazy";
     var strict = this.mode == "cbv";
@@ -87,7 +128,8 @@ LamMain.prototype.setLambdaString = function (string) {
 
     var term = this.parser.parse (string, lazy || false, strict || false);
     if (term) {
-        this.evaluator = new Evaluator (term);
+        this.error = false;
+        this.evaluator = new Evaluator (term, this.outputFn);
         //this.currentstep = this.evaluator.step ();
         this.currentsteps = this.evaluator.step ();
     }
@@ -169,6 +211,42 @@ LamMain.prototype.draw = function () {
         this.context.fillText (this.error, 2, 10);
         this.context.restore ();
     }
+    this.updateToolbarStatus ();
+};
+
+LamMain.modeLabels = {
+    cbn: "Call-by-name",
+    cbv: "Call-by-value",
+    lazy: "Lazy"
+};
+
+LamMain.prototype.updateToolbarStatus = function () {
+    var el = document.getElementById ("toolbar-status");
+    if (!el) {
+        return;
+    }
+    var modeLabel = LamMain.modeLabels[this.mode] || this.mode;
+    if (!this.evaluator) {
+        el.textContent = this.error
+            ? ("Parse error: " + this.error)
+            : "Load to start";
+        el.className = this.error ? "status status-error" : "status";
+        return;
+    }
+    var steps = this.evaluator.counter - 1;
+    var stepText = "";
+    if (this.currentsteps && this.currentsteps[0] && LamMain.stepinfo[this.currentsteps[0].name]) {
+        stepText = LamMain.stepinfo[this.currentsteps[0].name].text;
+    }
+    if (this.evaluator.done) {
+        el.textContent = "Done · " + modeLabel + " · " + steps + " reductions";
+    }
+    else {
+        var running = this.running ? " · running" : "";
+        el.textContent = modeLabel + " · " + steps + " reductions" + running
+            + (stepText ? " · " + stepText : "");
+    }
+    el.className = "status";
 };
 
 LamMain.prototype.forget = function () {
@@ -240,8 +318,11 @@ LamMain.prototype.run = function () {
     this.running = true;
     this.runLoop ();
 };
+var ps = [];
 
 LamMain.prototype.runLoop = function () {
+    console.log("runLoop")
+    ps = [];
     if (this.soundplayer && this.soundplayer.latency) {
         const startTime = this.soundplayer.audiocontext.currentTime;
         this.runLoopWithLatency (this.soundplayer, startTime, 0);
@@ -533,6 +614,8 @@ LamMain.stepinfo = {
             }
     };
 
+var keymap = {};
+Object.keys(LamMain.stepinfo).map((k,i) => keymap[k] = i);
 
 LamMain.randomizeFrequencies = function () {
     var i = 0;
