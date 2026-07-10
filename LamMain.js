@@ -17,6 +17,8 @@ function LamMain (canvas, textarea) {
 
     //this.currentstep = false;
     this.currentsteps = false;
+    this.outputStarted = false;
+    this.outputFn = function (n) { self.appendOutput (n); };
     try {
         this.soundplayer = new SoundPlayer ();
         this.loadSoundBank("sounds/soundbank1.json")
@@ -94,8 +96,31 @@ LamMain.prototype.setLambdaStringFromTextarea = function (mode) {
     this.setLambdaString (this.textarea.value);
 };
 
+LamMain.prototype.clearOutput = function () {
+    var el = document.getElementById ("program-output");
+    if (el) {
+        el.textContent = "";
+    }
+    this.outputStarted = false;
+};
+
+LamMain.prototype.appendOutput = function (n) {
+    var el = document.getElementById ("program-output");
+    if (!el) {
+        return;
+    }
+    if (this.outputStarted) {
+        el.textContent += " " + n;
+    }
+    else {
+        el.textContent = "" + n;
+        this.outputStarted = true;
+    }
+};
+
 LamMain.prototype.setLambdaString = function (string) {
     this.stop ();
+    this.clearOutput ();
     this.textarea.value = string;
     var lazy = this.mode == "lazy";
     var strict = this.mode == "cbv";
@@ -104,7 +129,7 @@ LamMain.prototype.setLambdaString = function (string) {
     var term = this.parser.parse (string, lazy || false, strict || false);
     if (term) {
         this.error = false;
-        this.evaluator = new Evaluator (term);
+        this.evaluator = new Evaluator (term, this.outputFn);
         //this.currentstep = this.evaluator.step ();
         this.currentsteps = this.evaluator.step ();
     }

@@ -122,6 +122,22 @@
                 font-size: 13px;
                 overflow-x: auto;
             }
+            .output-section {
+                margin: 4px 0;
+                font-size: 13px;
+            }
+            .output-section h2 {
+                font-size: 1em;
+                margin: 0 0 2px;
+            }
+            #program-output {
+                font-family: Courier, monospace;
+                min-height: 1.2em;
+                padding: 4px 6px;
+                background: #f8f8f8;
+                border: 1px solid #ddd;
+                word-break: break-all;
+            }
             input[type="range"] {
                 width: 72px;
                 height: 14px;
@@ -243,6 +259,11 @@
         <canvas id="can1" width="800" height="600"
             title="Drag to pan. Click a subterm to focus (not in lazy mode)."></canvas>
 
+        <section class="output-section">
+            <h2>Output</h2>
+            <div id="program-output"></div>
+        </section>
+
         <section id="help" class="help-section">
             <h2>How to use</h2>
             <ol>
@@ -253,6 +274,7 @@
             </ol>
             <p><strong>Evaluation strategies:</strong> <strong>Call-by-value</strong> usually does not terminate on recursive programs (e.g. fibonacci) — the expression keeps growing instead of reducing to a result. Use <strong>lazy</strong> or <strong>call-by-name</strong> for those examples. Parallel examples require <strong>lazy</strong>.</p>
             <p><strong>Canvas:</strong> drag to pan; click a subterm to focus evaluation (call-by-name and call-by-value only). The red label marks the subexpression reduced next.</p>
+            <p><strong>Output:</strong> <strong>put</strong> writes numbers to the Output panel below the canvas (space-separated).</p>
             <p><strong>Sound:</strong> turn up Volume to hear each reduction; enable precise audio timing when using Run with sound.</p>
             <a href="#toolbar" class="back-link">Back to controls</a>
         </section>
@@ -281,7 +303,7 @@ T =
     ceil T
     floor T
     round T
-    put T                   output to console (will be wrapped inside a return)
+    put T                   output to Output panel (will be wrapped inside a return)
     alert T                 output to alert window (will be wrapped inside a return)
 
     random                  get random number (will be wrapped inside a return)
