@@ -1,0 +1,152 @@
+{ 
+	"op0"    :{
+		"type": "sample",
+		"url": "sounds/perc_sh_descent.wav"
+		
+		}, 
+	"op1"    :{
+		"type": "sample",
+		"url": "sounds/perc_crossfeed_chaos.wav"
+		
+		}, 
+	"op1_0"  :{
+		"type": "sample",
+		"url": "sounds/perc_grainfm_cloud.wav"
+		
+		}, 
+	"op2"    :{
+		"type": "sample",
+		"url": "sounds/perc_alias_fold.wav"
+		
+		}, 
+	"op2_0"  :{
+		"type": "sample",
+		"url": "sounds/perc_filter_bloop.wav"
+		
+		},
+    "app0"   :{
+    	"type": "sample",
+    	"url": "sounds/perc_spiral_shift.wav"
+    	
+    	},    
+    "app1"   :{
+    	"type": "sample",
+    	"url": "sounds/perc_dbrown_walk.wav"
+    	
+    	},    
+    "if0"    :{
+    	"type": "sample",
+    	"url": "sounds/perc_bytebeat_zap.wav"
+    	
+    	},    
+    "if1"    :{
+    	"type": "sample",
+    	"url": "sounds/tom_scissor.wav"
+    	
+    	},    
+    "rec"    :{
+    	"type": "sample",
+    	"url": "sounds/tom_sinoscfb.wav"
+    	
+    	},    
+    "bind0"  :{
+    	"type": "sample",
+    	"url": "sounds/tom_morph_cube.wav"
+    	
+    	},    
+    "bind1"  :{
+    	"type": "sample",
+    	"url": "sounds/clap_shuffle.wav"
+    	
+    	},
+    "iscons0":{
+    	"type": "sample",
+    	"url": "sounds/clap_bytebeat.wav"
+    	
+    	},    
+    "iscons1":{
+    	"type": "sample",
+    	"url": "sounds/clap_formlet_swarm.wav"
+    	
+    	},    
+    "car0"   :{
+    	"type": "sample",
+    	"url": "sounds/hat_tick_cascade.wav"
+    	
+    	},    
+    "car1"   :{
+    	"type": "sample",
+    	"url": "sounds/hat_fold_metal.wav"
+    	
+    	},    
+    "cdr0"   :{
+    	"type": "sample",
+    	"url": "sounds/hat_gendy3.wav"
+    	
+    	},    
+    "cdr1"   :{
+    	"type": "sample",
+    	"url": "sounds/hat_blip_shimmer.wav"
+    	
+    	},
+    "cons0"  :{
+    	"type": "sample",
+    	"url": "sounds/hat_lincong.wav"
+    	
+    	}, 
+    "cons1"  :{
+    	"type": "sample",
+    	"url": "sounds/hat_bytebeat.wav"
+    	
+    	}, 
+    "cons2"  :{
+    	"type": "sample",
+    	"url": "sounds/snare_spectral_slide.wav"
+    	
+    	}, 
+    "cons3"  :{
+    	"type": "sample",
+    	"url": "sounds/snare_feedback_fm.wav"
+    	
+    	},   
+    "thunk0" :{
+    	"type": "sample",
+    	"url": "sounds/snare_randcomb.wav"
+    	
+    	}, 
+    "thunk1" :{
+    	"type": "sample",
+    	"url": "sounds/snare_freeze_frame.wav"
+    	
+    	}, 
+    "abs"    :{
+    	"type": "sample",
+    	"url": "sounds/snare_brickwall.wav"
+    	
+    	}, 
+    "num"    :{
+    	"type": "sample",
+    	"url": "sounds/kick_divider.wav"
+    	
+    	}, 
+    "unit"   :{
+    	"type": "sample",
+    	"url": "sounds/kick_wavetable_morph.wav"
+    	
+    	},
+    "freevar":{
+    	"type": "sample",
+    	"url": "sounds/kick_ringz_bend.wav"
+    	
+    	}, 
+    "par"    :{
+    	"type": "sample",
+    	"url": "sounds/kick_freqshift.wav"
+    	
+    	}, 
+    "block"  :{
+    	"type": "sample",
+    	"url": "sounds/kick_phase_distort.wav"
+    	
+    }
+ }
