@@ -1,0 +1,152 @@
+{ 
+	"op0"    :{
+		"type": "sample",
+		"url": "sounds/clap_data_error.wav"
+		
+		}, 
+	"op1"    :{
+		"type": "sample",
+		"url": "sounds/hat_logistic_dust.wav"
+		
+		}, 
+	"op1_0"  :{
+		"type": "sample",
+		"url": "sounds/hat_sine_tick.wav"
+		
+		}, 
+	"op2"    :{
+		"type": "sample",
+		"url": "sounds/kick_crushed_pulse.wav"
+		
+		}, 
+	"op2_0"  :{
+		"type": "sample",
+		"url": "sounds/kick_sine_cut.wav"
+		
+		},
+    "app0"   :{
+    	"type": "sample",
+    	"url": "sounds/perc_gendy_zap.wav"
+    	
+    	},    
+    "app1"   :{
+    	"type": "sample",
+    	"url": "sounds/perc_ring_blip.wav"
+    	
+    	},    
+    "if0"    :{
+    	"type": "sample",
+    	"url": "sounds/snare_buffer_stutter.wav"
+    	
+    	},    
+    "if1"    :{
+    	"type": "sample",
+    	"url": "sounds/snare_henon_burst.wav"
+    	
+    	},    
+    "rec"    :{
+    	"type": "sample",
+    	"url": "sounds/tom_chaos_collapse.wav"
+    	
+    	},    
+    "bind0"  :{
+    	"type": "sample",
+    	"url": "sounds/kick_fold_drop.wav"
+    	
+    	},    
+    "bind1"  :{
+    	"type": "sample",
+    	"url": "sounds/kick_single_cycle.wav"
+    	
+    	},
+    "iscons0":{
+    	"type": "sample",
+    	"url": "sounds/kick_hasher_thud.wav"
+    	
+    	},    
+    "iscons1":{
+    	"type": "sample",
+    	"url": "sounds/kick_sync_sweep.wav"
+    	
+    	},    
+    "car0"   :{
+    	"type": "sample",
+    	"url": "sounds/snare_cusp_shard.wav"
+    	
+    	},    
+    "car1"   :{
+    	"type": "sample",
+    	"url": "sounds/snare_spectral_scramble.wav"
+    	
+    	},    
+    "cdr0"   :{
+    	"type": "sample",
+    	"url": "sounds/snare_ratchet_decel.wav"
+    	
+    	},    
+    "cdr1"   :{
+    	"type": "sample",
+    	"url": "sounds/snare_gapped.wav"
+    	
+    	},
+    "cons0"  :{
+    	"type": "sample",
+    	"url": "sounds/hat_mantissa.wav"
+    	
+    	}, 
+    "cons1"  :{
+    	"type": "sample",
+    	"url": "sounds/hat_crackle_burst.wav"
+    	
+    	}, 
+    "cons2"  :{
+    	"type": "sample",
+    	"url": "sounds/hat_quad_ticks.wav"
+    	
+    	}, 
+    "cons3"  :{
+    	"type": "sample",
+    	"url": "sounds/hat_gbman_hiss.wav"
+    	
+    	},   
+    "thunk0" :{
+    	"type": "sample",
+    	"url": "sounds/hat_pwm_fizz.wav"
+    	
+    	}, 
+    "thunk1" :{
+    	"type": "sample",
+    	"url": "sounds/clap_grain_cloud.wav"
+    	
+    	}, 
+    "abs"    :{
+    	"type": "sample",
+    	"url": "sounds/clap_lfsr.wav"
+    	
+    	}, 
+    "num"    :{
+    	"type": "sample",
+    	"url": "sounds/tom_formant_drop.wav"
+    	
+    	}, 
+    "unit"   :{
+    	"type": "sample",
+    	"url": "sounds/perc_standard_chirp.wav"
+    	
+    	},
+    "freevar":{
+    	"type": "sample",
+    	"url": "sounds/perc_bit_tone.wav"
+    	
+    	}, 
+    "par"    :{
+    	"type": "sample",
+    	"url": "sounds/perc_zipper.wav"
+    	
+    	}, 
+    "block"  :{
+    	"type": "sample",
+    	"url": "sounds/perc_morse_noise.wav"
+    	
+    }
+ }
